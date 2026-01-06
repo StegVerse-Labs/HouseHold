@@ -19,6 +19,14 @@ I appreciate that the transmission work was covered under warranty. However, I a
    - No loaner/alternate vehicle was provided (if applicable)
    - I incurred losses related to towing and loss of use
 
+3) Goodwill consideration for loss of use:
+
+   - The vehicle was unavailable for approximately five months
+     (March 2023 through August 2023)
+   - No loaner or substitute vehicle was offered or provided during
+     the dealership custody period
+   - I incurred towing and loss-of-use impacts during the extended repair window
+     
 I also request clarification regarding service-history entries that appear during the custody period (e.g., “normal maintenance” shown on CARFAX) to ensure the service record accurately reflects what occurred.
 
 Please let me know the best point of contact to provide the written attestation and to discuss goodwill resolution. I’m happy to provide any supporting documents needed and would prefer to resolve this cooperatively.
