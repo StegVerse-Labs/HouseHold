@@ -1,0 +1,9 @@
+household/_new-incident-template/
+├── README.md
+├── timeline/
+│   └── initial-observations.md
+├── custody/
+├── provenance/
+├── findings/
+├── escalation/
+└── attachments/
