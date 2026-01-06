@@ -9,7 +9,7 @@ Each packet is self-contained and includes:
 
 ## Key facts (verified)
 
-- Vehicle: 2023 Corvette Stingray Z51 (C8)
+- Vehicle: 2023 Corvette Stingray 2LT Z51 (C8)
 - Purchase date: December 2022
 - Dealership: Don Ringler Chevrolet (Temple, TX)
 - Failure date: March 2023
@@ -20,3 +20,4 @@ Each packet is self-contained and includes:
 - Repair documentation may not explicitly state transmission replacement
 - CARFAX reflects “normal maintenance” during custody period
 - Vehicle financing through USAA Federal Savings Bank (San Antonio, TX)
+- No loaner or substitute vehicle was offered or provided during the dealer custody period
