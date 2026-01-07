@@ -1,107 +1,125 @@
 # Contributing to HouseHold
 
-HouseHold is a **real-world incident repository**.
-It is designed to reduce cognitive load during stressful situations by enforcing structure and traceability.
+Welcome to **HouseHold**, the primary **real-world proving ground** for StegVerse
+escalation, evidence, and custody protocols.
 
-This repo values **clarity over cleverness**.
-
----
-
-## What This Repo Is
-
-- A timeline-driven record of events
-- A place to store findings and constraints
-- A staging ground for escalation packets
-- A proving ground for the Household Escalation Engine (HEE)
+HouseHold demonstrates how StegDB protocols and the HEE engine work
+against actual consumer incidents.
 
 ---
 
-## What This Repo Is NOT
+## 🧭 HouseHold’s Role
 
-- A legal filing system
-- A replacement for professional advice
-- A dumping ground for unorganized files
+HouseHold exists to:
 
----
+- Track real incidents (warranties, repairs, custody disputes)
+- Organize evidence and timelines
+- Generate escalation packets
+- Demonstrate HEE in practice
 
-## Adding a New Incident
-
-1. Copy `_new-incident-template/`
-2. Rename it to a descriptive incident folder
-3. Populate:
-   - `timeline/initial-observations.md`
-   - evidence folders as applicable
-4. Add a short `README.md` summarizing the incident
+HouseHold **does not define protocols**.
+It **consumes** them.
 
 ---
 
-## Writing Timeline Entries
+## 📁 Repository Structure Rules
 
-Timeline entries must:
-- Be dated in filename (`YYYY-MM-DD__description.md`)
-- Contain only observed facts
-- Avoid conclusions or accusations
+Each incident folder represents **one real-world event**.
 
-Interpretation belongs in `findings/`.
+Example:
+  `water-heater-replacement/**`
 
----
-
-## Findings vs Evidence
-
-### Evidence
-- Photos
-- PDFs
-- Receipts
-- Messages
-
-Stored in:
-- `photos/`
-- `attachments/`
-- `contract/`
-- `estimates/`
-
-### Findings
-- Analysis
-- Constraints
-- Risks
-- Options
-
-Stored in:
-- `findings/`
+Rules:
+- One incident per folder
+- No mixing unrelated issues
+- All claims must be traceable to evidence
 
 ---
 
-## Escalation Packets
+## 📄 What You May Edit Freely
 
-Escalation folders are **send-ready** bundles.
+You may add or update:
+- Timelines
+- Findings
+- Evidence references
+- Incident README summaries
+- Generated escalation packets
 
-Each level must include:
-- `letter.md`
-- `README.md` (packet index)
-- `attachments.md` (explicit evidence list)
-
-Nothing enters escalation without being traceable to evidence.
-
----
-
-## Privacy & Safety
-
-Before committing:
-- Redact personal identifiers
-- Remove metadata if necessary
-- Avoid publishing sensitive PDFs unless scrubbed
-
-HouseHold can be public or private — structure must work either way.
+These reflect **state**, not protocol.
 
 ---
 
-## Philosophy
+## 🚫 What You Must NOT Duplicate
 
-When stress is high, structure is mercy.
+Do **not** copy or redefine:
+- Evidence confidence rules
+- Custody transition logic
+- Escalation level definitions
+- Letter templates
 
-If something feels confusing:
-- Split it
-- Date it
-- Link it
+These are defined in:
+- `StegDB/protocols/**`
+- `HouseHold/HEE/templates/**`
+
+Incidents should **reference**, not redefine.
 
 ---
+
+## ✉️ Escalation Packets
+
+Escalation folders (`/escalation/level-*`) must:
+
+- Be complete and send-ready
+- Contain:
+  - `letter.md` (generated)
+  - `attachments.md`
+  - `README.md` explaining escalation context
+- Reference canonical protocols
+
+Letters should never be handwritten when a template exists.
+
+---
+
+## 🧾 Evidence Handling
+
+Evidence must:
+- Be indexed
+- Be traceable to ingestion
+- Respect confidence scoring expectations
+
+If evidence cannot meet minimum confidence thresholds, it should:
+- Be flagged
+- Or excluded from escalation packets
+
+---
+
+## 🔄 Custody Awareness
+
+Custody changes, access attempts, or ambiguity:
+- Should be documented
+- May trigger notification events
+- Must never be silently altered
+
+HouseHold demonstrates **custody awareness**, not enforcement logic.
+
+---
+
+## 🧠 Design Philosophy
+
+- Incidents are state, not structure
+- Templates live once
+- Protocols are referenced, not copied
+- Escalation should reduce cognitive load, not increase it
+
+HouseHold proves that the system works under pressure.
+
+---
+
+## 📬 Questions & Contributions
+
+If you’re unsure where something belongs:
+- Ask first
+- Or prototype locally before committing
+
+Your contributions help turn real-world frustration
+into verifiable, resolvable outcomes.
