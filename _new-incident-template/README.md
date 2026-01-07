@@ -24,5 +24,8 @@ It is copied to create new incident folders.
 2. Rename it to a descriptive incident name (kebab-case)
 
 Example:
-```txt
-water-heater-replacement/
+```
+txt   water-heater-replacement/
+```
+3.	Populate files incrementally as information becomes available
+4.	Do not alter folder names or meanings
