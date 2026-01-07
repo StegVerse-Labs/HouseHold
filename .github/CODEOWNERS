@@ -1,0 +1,8 @@
+# Default owners (adjust handles)
+* @StegVerse-Labs/household-maintainers
+
+# HEE templates should be reviewed carefully
+/HEE/ @StegVerse-Labs/household-maintainers
+
+# Incident folders (owners can be narrower if desired)
+# /water-heater-replacement/ @StegVerse-Labs/household-maintainers
