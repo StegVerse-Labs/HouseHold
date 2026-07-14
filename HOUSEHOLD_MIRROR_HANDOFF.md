@@ -2,7 +2,7 @@
 
 ## Status
 
-HouseHold is the active real-world proving ground for the Household Escalation Engine (HEE). This handoff preserves the repository state, architectural decisions, unresolved implementation work, and the permitted continuation scope so future work does not depend on this conversation.
+HouseHold is the active real-world proving ground for the Household Escalation Engine (HEE). This handoff preserves repository state, architectural decisions, unresolved implementation work, and permitted continuation scope.
 
 Current continuation state:
 
@@ -12,7 +12,8 @@ incident documentation
 → evidence organization
 → custody/provenance separation
 → escalation packet structure
-→ HEE template consolidation
+→ guidance layer committed
+→ safe fixture and dry-run validator
 → StegDB protocol registration
 → deterministic evidence ingest
 → confidence-aware packet generation
@@ -25,50 +26,60 @@ incident documentation
 2. HouseHold is a consumer/proving-ground repository containing real incident state and implementation evidence.
 3. HEE bridges StegDB protocols to HouseHold incident workflows; HEE does not replace legal, regulatory, or professional judgment.
 4. Protocols live once in StegDB. HouseHold incidents reference them rather than redefining them.
-5. HEE templates live once under `HEE/`; incident folders contain incident state, evidence references, findings, and generated escalation packets.
+5. HEE templates live once under `HEE/`; incident folders contain incident state, evidence references, findings, and reviewed escalation packets.
 6. Timeline files contain dated observations and events. Interpretation, constraints, impacts, risks, and remedy analysis belong in `findings/`.
-7. Custody, provenance, and optional financial context are separate layers. Escalation packets consume these layers without rewriting them.
+7. Custody, provenance, and optional financial context are separate layers.
 8. Evidence confidence is decision-support metadata, not proof, authentication, or a legal conclusion.
-9. Custody transitions are append-only events and should be notification-capable; notification does not itself establish authority or truth.
-10. Evidence originals must not be silently overwritten. Index records, hashes, transformations, and custody events must remain traceable.
-11. Automation must remain deterministic, fail clearly, and preserve manual review before external delivery.
-12. HouseHold contains sensitive real-world material; public artifacts must be redacted or represented by safe references/hashes.
-13. Canonical synchronization must be overlay-only. It must not replace incident data, `entities/`, existing templates, papers, references, submissions, or other working outputs.
+9. Custody transitions are append-only and notification-capable; notification does not establish authority or truth.
+10. Evidence originals must not be silently overwritten. Hashes, transformations, index records, and custody events must remain traceable.
+11. Automation must remain deterministic, fail clearly, and preserve human review before external delivery.
+12. HouseHold may contain sensitive real-world material; public examples and CI fixtures must be redacted or synthetic.
+13. Canonical synchronization must be overlay-only and must not replace incident data or unrelated working outputs.
 
-## Current Repository Evidence
+## Durable Records
 
-The repository currently contains:
+### HouseHold
 
-- Root `README.md` describing HouseHold, HEE, current incidents, evidence organization, escalation packet folders, and privacy cautions.
-- `HEE/household-escalation-engine.md` defining HEE as a documentation-first, evidence-backed, domain-agnostic escalation system.
-- `HEE/engine/packet-spec.md`.
-- `HEE/intake/intake_questionnaire.md`.
-- Automotive templates under `HEE/templates/automotive/`.
-- `_new-incident-template/timeline/initial-observations.md`.
-- `water-heater-replacement/` as a home-warranty incident exemplar.
-- `corvette-c8-transmission/` as an automotive custody, provenance, findings, and escalation exemplar.
+- This handoff: `HOUSEHOLD_MIRROR_HANDOFF.md`
+- Root repository guidance: `README.md`
+- Contribution boundary and validation rules: `CONTRIBUTING.md`
+- Privacy and security handling: `SECURITY.md`
+- Incident template guidance: `_new-incident-template/README.md`
+- HEE authority, packet, and automation constraints: `HEE/README.md`
+- Foundational HEE principles: `HEE/household-escalation-engine.md`
+- Packet specification: `HEE/engine/packet-spec.md`
+- Intake guidance: `HEE/intake/intake_questionnaire.md`
+
+### StegDB
+
+- Linked protocol task: `StegVerse-Labs/StegDB#9`
+- Scope: HEE artifacts, confidence factors and limitations, custody transitions, notifications, packet review state, and overlay-only canonical consumption.
 
 ## Completed Work
 
-- Established the protocol/implementation boundary between StegDB, HEE, and HouseHold.
-- Established the facts-versus-analysis split between `timeline/` and `findings/`.
-- Established escalation packet expectations around `letter.md`, `README.md`, and `attachments.md`.
-- Established custody and provenance as distinct from incident conclusions.
-- Established the need for evidence confidence metadata and append-only custody events.
-- Drafted contributor guidance, structure documentation, security guidance, issue/PR templates, HEE README material, escalation-level guidance, letter and attachment templates, a Python CLI/engine concept, and a dispatchable packet-generation workflow.
+- Established the StegDB/HEE/HouseHold authority boundary.
+- Established facts-versus-analysis separation.
+- Established evidence, provenance, custody, confidence, and review-state distinctions.
+- Established escalation packet expectations around `letter.md`, `attachments.md`, a packet index, and human review.
+- Committed the durable repository guidance layer without adding automation.
+- Created the linked StegDB protocol-registration task.
 
-## Important Commit-State Distinction
+### Guidance Commits
 
-The following items were designed in session but must not be treated as committed or validated unless they are found in the repository at continuation time:
+- Initial handoff: `66deb63631ed1d1213c82504e3cc13810baae1ad`
+- `CONTRIBUTING.md`: `cc31bbb944df872c5192aa566017712d5fdd0cc3`
+- `SECURITY.md`: `505f55ea7f968940b1e856c841aaad417c9b3976`
+- `_new-incident-template/README.md`: `2cbc7387e589609be968fb0dc402d75581a2d4c5`
+- `HEE/README.md`: `f25e2225e262746023069974c88c3c113a305341`
 
-- `CONTRIBUTING.md`
-- `SECURITY.md`
+## Commit-State Distinction
+
+The following items were discussed or drafted previously but are not authoritative unless present and validated on the default branch:
+
 - `docs/STRUCTURE.md`
 - `.github/CODEOWNERS`
 - `.github/pull_request_template.md`
 - `.github/ISSUE_TEMPLATE/*`
-- `_new-incident-template/README.md`
-- `HEE/README.md`
 - `HEE/escalation-level-spec.md`
 - `HEE/letter-template.md`
 - `HEE/attachments-template.md`
@@ -77,85 +88,92 @@ The following items were designed in session but must not be treated as committe
 - `HEE/engine/__init__.py`
 - `.github/workflows/hee-generate.yml`
 
-A continuation session must inspect the default branch before creating any of these files, preserve existing content, and avoid duplicate or conflicting paths.
+Do not copy old drafts blindly. Inspect current files and implement the smallest verified next slice.
 
 ## Known Blockers and Risks
 
-- No complete repository-side HEE automation bundle has yet been verified through an actual GitHub Actions run.
-- Confidence scoring semantics require canonical StegDB review before they can be treated as ecosystem protocol.
-- Filesystem modification time and EXIF presence alone are not reliable truth indicators; they may be used only as transparent factors, never as authentication.
-- Generated letters and packets require human review before external delivery.
-- Existing incident folders may not yet conform to one identical folder contract; migration must be additive and non-destructive.
-- The repository may expose personal data, vehicle identifiers, addresses, communications, contracts, or receipts. Privacy review is required before expanding public automation or examples.
+- No complete repository-side HEE automation bundle has been validated through GitHub Actions.
+- Confidence scoring semantics require canonical StegDB review before ecosystem-wide use.
+- Filesystem modification time and EXIF presence are not reliable truth indicators; they may only be disclosed factors.
+- Generated letters and packets require human review before delivery.
+- Existing incidents may not share one identical folder contract; migration must remain additive and non-destructive.
+- Privacy review is required before using real incident evidence in examples, tests, artifacts, or workflow logs.
 
 ## Remaining Work
 
-### Phase 1 — Durable repository guidance
-
-1. Inspect existing repository files and commit non-conflicting versions of:
-   - `CONTRIBUTING.md`
-   - `SECURITY.md`
-   - `_new-incident-template/README.md`
-   - `HEE/README.md`
-2. Add a concise `docs/STRUCTURE.md` only if it reduces duplication rather than creating another authority source.
-3. Add PR/issue templates only after confirming they match actual repository workflows and labels.
-
 ### Phase 2 — Minimal HEE implementation
 
-1. Implement a minimal, standard-library-first CLI under `HEE/tools/`.
-2. Begin with read-only validation and dry-run packet planning before allowing repository mutation.
-3. Add artifact hashing and index generation without moving or rewriting originals by default.
-4. Add append-only custody events.
-5. Generate packet manifests before generating external-facing letters.
-6. Require explicit review state before a packet is marked send-ready.
+1. Add a synthetic fixture incident under a clearly non-production path.
+2. Implement a standard-library-first, read-only validator and dry-run packet planner.
+3. Validate required packet fields, stable evidence references, review state, and unresolved uncertainty.
+4. Emit a machine-readable plan and human-readable report without moving, renaming, or rewriting evidence.
+5. Add tests that use only the synthetic fixture.
+6. Update this handoff with commands, outputs, and commit SHAs.
 
 ### Phase 3 — StegDB protocol integration
 
-1. Register or refine canonical HEE artifact, evidence-confidence, custody-transition, and notification specifications in StegDB.
-2. Define version identifiers and migration rules.
-3. Keep HouseHold implementation-specific paths outside canonical protocol requirements.
-4. Add overlay-only canonical consumption with a lock/receipt recording the StegDB source version.
+Continue through `StegVerse-Labs/StegDB#9`:
+
+- version canonical artifact, confidence, custody, notification, packet-review, and source-lock requirements;
+- use synthetic examples;
+- preserve implementation independence;
+- keep HouseHold synchronization overlay-only.
 
 ### Phase 4 — CI validation
 
-1. Add a manually dispatched validation workflow first.
-2. Run against a safe fixture incident, not private evidence.
-3. Capture generated manifests, validation results, and receipts as artifacts.
-4. Do not auto-send letters or notifications from CI.
-5. Promote mutation or packet-generation behavior only after deterministic fixture validation passes.
+1. Add a manually dispatched validation workflow only after local fixture validation exists.
+2. Capture reports and receipts as workflow artifacts.
+3. Observe a real workflow run.
+4. Do not auto-send letters, notifications, or evidence.
+5. Add mutation behavior only after dry-run validation is deterministic and reviewed.
 
 ## Exact Next Authorized Task
 
 ```text
-Inspect the current default branch, then commit the smallest non-conflicting guidance layer:
-CONTRIBUTING.md, SECURITY.md, _new-incident-template/README.md, and HEE/README.md.
-Do not add automation in the same change.
+Create one synthetic HEE fixture and one read-only validator/dry-run packet planner.
+Do not add evidence ingestion, confidence scoring, file movement, letter generation, or external delivery yet.
+```
+
+Expected files:
+
+```text
+HEE/fixtures/minimal-incident/
+HEE/tools/validate_incident.py
+HEE/tests/test_validate_incident.py
+```
+
+Expected outputs when run:
+
+```text
+out/hee/minimal-incident/validation.json
+out/hee/minimal-incident/validation.md
+out/hee/minimal-incident/packet-plan.json
 ```
 
 Done when:
 
-- Each file exists on the default branch.
-- Each file reflects the StegDB/HouseHold/HEE authority boundary.
-- The files distinguish evidence, claims, confidence, custody, and external delivery.
-- No incident evidence or existing template is overwritten.
-- This handoff is updated with the resulting commit SHA and the next implementation task.
+- the fixture contains no real personal or incident data;
+- the validator is read-only with respect to fixture and incident inputs;
+- outputs distinguish errors, warnings, unresolved uncertainty, and review state;
+- tests pass locally or in an existing safe execution path;
+- no external-facing letter is generated;
+- this handoff records the implementation commit and validation evidence.
 
 ## Ownership and Permitted Continuation Scope
 
-- Active owner: next authorized HouseHold/HEE build session or StegVerse entity assigned to `StegVerse-Labs/HouseHold`.
-- StegDB protocol work is owned by the next authorized session assigned to `StegVerse-Labs/StegDB`.
-- This handoff grants no authority to publish private evidence, send escalation letters, notify counterparties, or claim legal validity.
-- Permitted next scope is repository guidance, safe fixture design, protocol registration, deterministic local tooling, and CI validation.
-- Do not perform full-folder replacement. Use additive or exact-file updates only.
+- Active HouseHold owner: next authorized HouseHold/HEE build session or StegVerse entity assigned to `StegVerse-Labs/HouseHold`.
+- Active StegDB owner: next authorized session or entity assigned to `StegVerse-Labs/StegDB#9`.
+- No authority is granted to publish private evidence, send escalation letters, notify counterparties, claim legal validity, or perform full-folder replacement.
+- Permitted scope is synthetic fixtures, read-only validation, dry-run planning, protocol registration, additive exact-file changes, and later CI evidence.
 
 ## Pending Validation and Observation Requirements
 
-- Verify every drafted path against the default branch before mutation.
-- Verify that canonical protocol references resolve to committed StegDB files.
-- Validate all YAML and Python against safe fixtures.
+- Verify every path against the default branch before mutation.
+- Validate Python and structured outputs against synthetic fixtures.
+- Verify canonical references resolve before claiming integration.
 - Observe at least one GitHub Actions run before claiming workflow completion.
-- Record generated hashes, manifests, exclusions, and review state in durable receipts.
+- Record hashes, manifests, exclusions, uncertainty, and review state in durable receipts as implementation matures.
 
 ## Archive Readiness
 
-This file preserves the session-specific decisions, discovered tasks and blockers, completed design work, remaining work, ownership state, validation requirements, and permitted continuation scope. Future work can continue from this handoff and linked StegDB task records without access to the originating conversation.
+All session-specific decisions, completed work, discovered blockers, remaining tasks, active ownership, validation requirements, and continuation boundaries are preserved in this handoff and `StegVerse-Labs/StegDB#9`.
