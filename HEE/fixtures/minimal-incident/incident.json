@@ -1,0 +1,20 @@
+{
+  "incident_id": "minimal-incident",
+  "escalation_level": 1,
+  "counterparty": "Example Service Provider",
+  "objectives": [
+    "Receive a written response",
+    "Request correction or a documented alternative remedy"
+  ],
+  "evidence_paths": [
+    "evidence/example-receipt.txt"
+  ],
+  "supporting_paths": [
+    "timeline/2026-01-01__initial-observation.md",
+    "findings/remedy-goals.md"
+  ],
+  "review_state": "draft",
+  "unresolved_uncertainty": [
+    "The counterparty has not yet confirmed receipt of the initial request."
+  ]
+}
