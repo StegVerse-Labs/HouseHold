@@ -1,144 +1,136 @@
-# 📄 `HouseHold/HEE/README.md`
-
-```md
 # HEE — Household Escalation Engine
 
-HEE defines **how incidents become action**.
+HEE is the reusable implementation layer that helps turn HouseHold incident records into structured, reviewable escalation packets.
 
-StegDB defines the protocol.
-HouseHold proves it in real life.
+StegDB defines canonical protocols and schemas. HouseHold contains real incident state. HEE connects the two without changing the underlying facts or replacing human judgment.
 
----
+## What HEE Provides
 
-## What HEE Is
+- intake structure;
+- packet and manifest patterns;
+- evidence-reference and validation guidance;
+- custody-aware documentation patterns;
+- confidence-aware decision support;
+- graduated escalation templates;
+- deterministic tooling and CI validation as those components are implemented.
 
-HEE is a **pattern**, not a product.
+## What HEE Does Not Do
 
-It provides:
-- Intake structure
-- Evidence manifests
-- Escalation packet templates
-- Confidence-aware documentation flow
+HEE does not:
 
-HEE does **not**:
-- Decide legal outcomes
-- Replace attorneys
-- Alter facts
-- Guarantee success
+- authenticate evidence by itself;
+- decide legal rights, liability, or outcomes;
+- replace attorneys, regulators, contractors, mechanics, or other professionals;
+- convert a custody record into proof of ownership or authority;
+- guarantee resolution;
+- send external communications without explicit authorization and review.
 
----
-
-## HEE Scope in HouseHold
-
-HouseHold uses HEE to:
-- Standardize incident documentation
-- Generate escalation packets
-- Reduce decision fatigue
-- Preserve custody and confidence
-
-HouseHold does **not** define:
-- Custody protocol
-- Confidence scoring logic
-- Notification rules
-
-Those live in **StegDB**.
-
----
-
-## Relationship to StegDB
+## Layer Responsibilities
 
 | Layer | Responsibility |
-|-----|---------------|
-| StegDB | Protocols, schemas, rules |
-| HouseHold | Real incidents using those rules |
-| HEE | The bridge between the two |
+|---|---|
+| StegDB | Canonical protocols, schemas, versioning, validation rules, and compatibility requirements |
+| HEE | Reusable intake, validation, manifest, and packet-generation implementation |
+| HouseHold incident | Real observations, evidence references, findings, custody/provenance records, remedies, and reviewed output |
 
-If something feels like a “rule” → it belongs in StegDB  
-If something feels like “this happened” → it belongs in HouseHold  
+Rules that apply across repositories belong in StegDB. Reusable implementation belongs in HEE. Statements about a specific real-world matter belong in its HouseHold incident folder.
 
----
+## Incident Flow
 
-## HEE Intake Pattern
+```text
+intake
+→ timeline and evidence organization
+→ findings and remedy goals
+→ custody/provenance review
+→ packet planning
+→ evidence and confidence review
+→ human approval
+→ external delivery outside HEE
+```
 
-Each incident:
-- Is created from `_new-incident-template/`
-- Accumulates evidence
-- Produces findings
-- Optionally escalates
+No stage should silently rewrite the records produced by an earlier stage.
 
-Nothing skips steps.
+## Evidence, Confidence, and Custody
 
----
+HEE records what exists and what factors affect how a record may be used.
+
+- Evidence references identify source material.
+- Provenance records describe origin and history.
+- Custody records describe handling or responsibility.
+- Confidence records disclose transparent factors, limitations, and overrides.
+
+These records support review. None independently proves authenticity, truth, ownership, authority, liability, or admissibility.
+
+Original evidence should remain unchanged. Transformations, redactions, generated derivatives, and custody events should be recorded rather than hidden.
 
 ## Escalation Levels
 
-Escalation is **graduated**, not emotional.
+Escalation is graduated and target-specific.
 
-```txt
-escalation/
-├── level-1/   # Vendor / warranty / dealer
-├── level-2/   # Corporate / executive
-├── level-3/   # Regulator / AG / formal dispute
+```text
+level-1-<target>/      direct provider, dealer, contractor, or warranty channel
+level-2-<target>/      management, corporate, manufacturer, or executive channel
+level-3-<authority>/   regulator, licensing body, attorney general, arbitration, or another formal channel
+```
 
-Each level is:
-	•	Self-contained
-	•	Send-ready
-	•	Justified by evidence
+Skipping a level requires an incident-specific reason. Level names do not confer legal status or guarantee that a recipient has jurisdiction.
 
-⸻
+## Packet Contract
 
-Escalation Packet Requirements
+A typical packet contains:
 
-Every escalation folder must contain:
+```text
+level-n-<target>/
+├── README.md
+├── letter.md
+├── attachments.md
+└── packet.yml        # optional machine-readable manifest
+```
 
-level-n/
-├── letter.md      # The message being sent
-├── README.md      # Why + what’s attached
-├── attachments.md # Explicit attachment list
+The packet should state:
 
-No attachments = no escalation.
+- incident and target;
+- requested remedy;
+- material claims and their supporting references;
+- included and excluded evidence;
+- known uncertainty;
+- preparation date;
+- review state;
+- delivery state, when applicable.
 
-⸻
+A generated packet is a draft. It becomes send-ready only after a human reviewer confirms the recipient, factual statements, attachments, requested remedy, dates, and delivery method.
 
-Confidence & Custody
+## Automation Constraints
 
-HouseHold:
-	•	Records what exists
-	•	Notes confidence limits
-	•	Does not fabricate certainty
+HEE automation must:
 
-StegDB:
-	•	Defines how confidence is scored
-	•	Defines custody transitions
-	•	Defines notification behavior
+- begin with validation and dry-run behavior;
+- preserve original evidence;
+- avoid moving or overwriting files by default;
+- use synthetic fixtures in CI;
+- fail clearly when required inputs or canonical rules are missing;
+- record hashes, manifests, exclusions, transformations, and review state;
+- never auto-send a letter or notification merely because generation succeeded.
 
-⸻
+Canonical synchronization from StegDB must be overlay-only and must not replace incident evidence or unrelated working outputs.
 
-Design Principles
-	•	Calm over force
-	•	Evidence over argument
-	•	Structure over memory
-	•	Traceability over volume
+## Current Repository Components
 
-⸻
+The repository currently includes:
 
-Why HEE Matters
+- `household-escalation-engine.md` — foundational HEE principles;
+- `engine/packet-spec.md` — packet specification work;
+- `intake/intake_questionnaire.md` — intake guidance;
+- `templates/automotive/` — automotive template examples.
 
-Most warranty and dispute failures happen because:
-	•	Documents are scattered
-	•	Facts are mixed with opinion
-	•	People burn out before escalation
+Implementation status and the exact next authorized task are preserved in `../HOUSEHOLD_MIRROR_HANDOFF.md`.
 
-HEE exists to prevent that.
+## Design Principles
 
-⸻
-
-Future Direction
-
-HEE is designed to scale into:
-	•	Consumer services
-	•	Asset lifecycle tracking
-	•	Custody-aware transfers
-	•	Automated escalation generation
-
-HouseHold is the proving ground
+- evidence before argument;
+- facts separated from analysis;
+- custody separated from truth;
+- transparency over false certainty;
+- calm, incremental escalation;
+- review before delivery;
+- history survives transfer of responsibility.
