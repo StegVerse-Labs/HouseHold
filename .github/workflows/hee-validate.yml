@@ -1,0 +1,55 @@
+name: HEE Validate Synthetic Fixture
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run unit tests
+        run: python -m unittest discover -s HEE/tests -p 'test_*.py'
+
+      - name: Validate synthetic fixture
+        run: |
+          python HEE/tools/validate_incident.py \
+            HEE/fixtures/minimal-incident \
+            --output-root out/hee
+
+      - name: Verify expected outputs
+        run: |
+          test -f out/hee/minimal-incident/validation.json
+          test -f out/hee/minimal-incident/validation.md
+          test -f out/hee/minimal-incident/packet-plan.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          root = Path("out/hee/minimal-incident")
+          validation = json.loads((root / "validation.json").read_text())
+          plan = json.loads((root / "packet-plan.json").read_text())
+
+          assert validation["status"] == "PASS", validation
+          assert validation["errors"] == [], validation
+          assert plan["send_authorized"] is False, plan
+          PY
+
+      - name: Upload validation outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: hee-minimal-incident-validation
+          path: out/hee/minimal-incident/
+          if-no-files-found: error
+          retention-days: 30
