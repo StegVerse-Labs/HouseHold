@@ -1,114 +1,102 @@
-# New Incident Template (HouseHold)
+# New Incident Template
 
-This folder defines the **canonical structure** for any real-world incident
-tracked in the HouseHold repository.
+This directory defines the reusable starting structure for a HouseHold incident.
 
-⚠️ **This folder is a TEMPLATE.**
-It is never modified for a specific incident.
-It is copied to create new incident folders.
+Copy the template to a new kebab-case directory. Do not modify this template to represent a specific incident.
 
----
+## Authority Boundary
 
-## Purpose
+- StegDB defines canonical protocols and schemas.
+- HEE supplies reusable intake, validation, and escalation patterns.
+- An incident directory contains only incident state, evidence references, findings, and reviewed packet output.
 
-- Enforce consistency across incidents
-- Reduce cognitive load during stressful events
-- Ensure escalation packets are complete and defensible
-- Keep HouseHold aligned with StegDB / HEE protocols
+Do not duplicate custody, confidence, notification, or escalation rules inside an incident.
 
----
+## Recommended Incident Layout
 
-## How to Use
-
-1. Copy `_new-incident-template/`
-2. Rename it to a descriptive incident name (kebab-case)
-
-Example:
-```txt
-   water-heater-replacement/
-```
-3.	Populate files incrementally as information becomes available
-4.	Do not alter folder names or meanings
-
-##Canonical Incident Layout
-```txt
+```text
 incident-name/
+├── README.md
+├── timeline/
+├── findings/
 ├── attachments/
-│   ├── comms/            # Emails, texts, call summaries
-│   └── .gitkeep
-├── photos/               # Photos/videos (referenced, not interpreted)
-│   └── .gitkeep
-├── estimates/            # Contractor or vendor estimates
-│   └── .gitkeep
-├── contract/             # Warranty, purchase, service contracts
-│   └── .gitkeep
-├── findings/             # Analysis, constraints, risk, conclusions
-│   ├── safety-assessment.md
-│   ├── system-configuration.md
-│   └── .gitkeep
-├── timeline/             # Date-stamped factual records
-│   └── YYYY-MM-DD_event.md
-├── escalation/           # Send-ready escalation packets
-│   ├── level-1/
-│   ├── level-2/
-│   └── level-3/
-├── README.md              # Incident overview + navigation
+│   └── comms/
+├── photos/
+├── estimates/
+├── contract/
+├── custody/
+├── provenance/
+└── escalation/
+    ├── level-1-<target>/
+    ├── level-2-<target>/
+    └── level-3-<authority>/
 ```
 
-Folder Rules (Non-Negotiable)
+Only create folders the incident needs. Existing incidents do not need destructive migration to match this example.
 
-One Incident = One Folder
-	•	Do not combine unrelated issues
-	•	Do not reuse folders
+## Start a New Incident
 
-Facts vs Analysis
-	•	timeline/ → what happened, when, by whom
-	•	findings/ → interpretation, constraints, risks, conclusions
+1. Copy `_new-incident-template/`.
+2. Rename the copy using a clear kebab-case name.
+3. Write an incident summary in `README.md`.
+4. Record the first dated observation in `timeline/`.
+5. Add supporting artifacts without renaming or overwriting originals after they are referenced.
+6. Record interpretation, risks, constraints, impacts, and remedy analysis in `findings/`.
+7. Create an escalation directory only when a packet is being prepared.
 
-No Protocol Redefinition
-	•	Do not redefine custody, confidence, or escalation rules
-	•	Protocols live in StegDB
-	•	Incidents apply them
+## Facts and Analysis
 
-⸻
+Use `timeline/` for dated observations and events:
 
-Evidence Handling
-	•	Evidence files live in folders
-	•	Claims about evidence live in Markdown
-	•	Do not annotate photos directly
-	•	Reference evidence by filename and date
+- what happened;
+- when it happened;
+- who communicated or acted;
+- which source records the event.
 
-⸻
+Use `findings/` for analysis:
 
-Escalation Readiness
+- what the records may mean;
+- inconsistencies or missing information;
+- safety, cost, loss-of-use, or reliability impacts;
+- remedy goals and alternatives.
 
-An incident is considered escalation-ready when:
-	•	Timeline is complete
-	•	Findings justify the remedy sought
-	•	All referenced evidence exists
-	•	Escalation folder contains:
-	•	letter.md
-	•	README.md (links + checklist)
+State uncertainty explicitly. Do not present an inference as an observed fact.
 
-⸻
+## Evidence Handling
 
-What Does NOT Go Here
+- Preserve originals.
+- Reference artifacts by stable filename or artifact identifier.
+- Record transformations and redactions.
+- Use hashes and manifests where available.
+- Do not annotate or modify an original merely to support a claim.
+- Treat confidence metadata as decision support, not proof or authentication.
 
-❌ Legal advice
-❌ Emotional commentary
-❌ Duplicated protocol text
-❌ Private credentials
+Custody describes handling or responsibility and is separate from provenance, truth, ownership, authority, and liability.
 
-⸻
+## Escalation Readiness
 
-Why This Exists
+A packet may be prepared when:
 
-When stress is high, structure must already exist.
+- the requested remedy is clear;
+- material claims point to supporting records;
+- attachments are enumerated;
+- known uncertainty and excluded evidence are visible;
+- the packet has an explicit review state.
 
-This template ensures:
-	•	Nothing important is forgotten
-	•	Every claim is traceable
-	•	Escalation is fast, calm, and credible
+A typical packet contains:
 
-  ---
+```text
+level-n-<target>/
+├── README.md
+├── letter.md
+├── attachments.md
+└── packet.yml        # optional machine-readable manifest
+```
 
+Generated material remains a draft until a human reviewer confirms the recipient, factual statements, attachments, remedy, and delivery method.
+
+## Privacy
+
+Do not commit credentials, tokens, unnecessary personal identifiers, account numbers, signatures, or unredacted private communications. Use synthetic fixtures for public automation tests.
+
+See the repository `SECURITY.md` and `CONTRIBUTING.md` before publishing evidence or automation changes.
