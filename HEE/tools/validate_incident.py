@@ -5,11 +5,14 @@ import argparse
 import hashlib
 import json
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 SCHEMA_VERSION = "hee-validation-v1"
+RECEIPT_VERSION = "hee-execution-receipt-v1"
 ALLOWED_REVIEW_STATES = {"draft", "reviewed", "sent"}
+MACHINE_STATES = {"COMPLETE", "BLOCKED", "RETRY", "REVIEW_REQUIRED", "FAILED"}
 REQUIRED_FIELDS = (
     "incident_id",
     "escalation_level",
@@ -19,6 +22,15 @@ REQUIRED_FIELDS = (
     "review_state",
     "unresolved_uncertainty",
 )
+BLOCKING_ERROR_CODES = {
+    "missing_required_field",
+    "missing_evidence",
+    "missing_supporting_file",
+}
+
+
+def _utc_now() -> str:
+    return datetime.now(timezone.utc).isoformat()
 
 
 def _sha256(path: Path) -> str:
@@ -171,8 +183,23 @@ def validate_incident(incident_dir: Path) -> dict[str, Any]:
     }
 
 
+def classify_machine_state(validation: dict[str, Any]) -> tuple[str, str]:
+    errors = validation.get("errors", [])
+    error_codes = {item.get("code") for item in errors}
+    if errors:
+        if error_codes & BLOCKING_ERROR_CODES:
+            return "BLOCKED", "Resolve missing required fields or referenced files, then rerun validation."
+        return "FAILED", "Correct invalid incident structure or values, then rerun validation."
+    if validation.get("review_state") != "reviewed":
+        return "REVIEW_REQUIRED", "A human authority must review the packet inputs and set review_state=reviewed."
+    if validation.get("unresolved_uncertainty") or validation.get("warnings"):
+        return "REVIEW_REQUIRED", "Resolve or explicitly accept recorded uncertainty and warnings."
+    return "COMPLETE", "No additional structural validation task is required for this incident revision."
+
+
 def build_packet_plan(incident_dir: Path, validation: dict[str, Any]) -> dict[str, Any]:
     _, manifest = _load_manifest(incident_dir.resolve())
+    machine_state, next_task = classify_machine_state(validation)
     return {
         "schema_version": "hee-packet-plan-v1",
         "incident_id": manifest.get("incident_id"),
@@ -180,6 +207,8 @@ def build_packet_plan(incident_dir: Path, validation: dict[str, Any]) -> dict[st
         "counterparty": manifest.get("counterparty"),
         "objectives": manifest.get("objectives", []),
         "review_state": manifest.get("review_state"),
+        "machine_state": machine_state,
+        "next_executable_task": next_task,
         "ready_for_human_review": validation["status"] == "PASS",
         "send_authorized": False,
         "evidence": validation["evidence"],
@@ -193,16 +222,48 @@ def build_packet_plan(incident_dir: Path, validation: dict[str, Any]) -> dict[st
     }
 
 
-def _markdown_report(validation: dict[str, Any]) -> str:
+def build_execution_receipt(
+    incident_dir: Path,
+    validation: dict[str, Any],
+    packet_plan: dict[str, Any],
+) -> dict[str, Any]:
+    machine_state = packet_plan["machine_state"]
+    if machine_state not in MACHINE_STATES:
+        raise ValueError(f"unsupported machine state: {machine_state}")
+    return {
+        "schema_version": RECEIPT_VERSION,
+        "generated_at": _utc_now(),
+        "owner_repository": "StegVerse-Labs/HouseHold",
+        "owner_component": "HEE synthetic-fixture validator",
+        "trigger_contract": ["workflow_dispatch", "push:path-filter", "schedule:weekly"],
+        "incident_id": validation.get("incident_id") or incident_dir.name,
+        "source_manifest_sha256": validation["source_manifest"]["sha256"],
+        "validation_status": validation["status"],
+        "machine_state": machine_state,
+        "next_executable_task": packet_plan["next_executable_task"],
+        "duplicate_execution_key": (
+            f"{validation.get('incident_id') or incident_dir.name}:"
+            f"{validation['source_manifest']['sha256']}"
+        ),
+        "outputs": ["validation.json", "validation.md", "packet-plan.json", "execution-receipt.json"],
+        "send_authorized": False,
+        "repository_mutation_authorized": False,
+        "external_delivery_authorized": False,
+    }
+
+
+def _markdown_report(validation: dict[str, Any], packet_plan: dict[str, Any]) -> str:
     lines = [
         f"# HEE Validation — {validation.get('incident_id') or 'unknown'}",
         "",
-        f"- **Status:** {validation['status']}",
+        f"- **Validation status:** {validation['status']}",
+        f"- **Machine state:** {packet_plan['machine_state']}",
         f"- **Review state:** {validation.get('review_state')}",
         f"- **Evidence files validated:** {len(validation['evidence'])}",
         f"- **Supporting files validated:** {len(validation['supporting_files'])}",
         f"- **Errors:** {len(validation['errors'])}",
         f"- **Warnings:** {len(validation['warnings'])}",
+        f"- **Next task:** {packet_plan['next_executable_task']}",
         "",
         "## Errors",
     ]
@@ -229,7 +290,7 @@ def _markdown_report(validation: dict[str, Any]) -> str:
         "",
         "## Boundary",
         "",
-        "This report validates structure and references only. It does not authenticate evidence, decide truth, establish custody authority, provide legal advice, or authorize delivery.",
+        "This report validates structure and references only. It does not authenticate evidence, decide truth, establish custody authority, provide legal advice, mutate the repository, or authorize delivery.",
         "",
     ]
     return "\n".join(lines)
@@ -244,16 +305,21 @@ def write_outputs(
     incident_id = validation.get("incident_id") or incident_dir.name
     output_dir = output_root / str(incident_id)
     output_dir.mkdir(parents=True, exist_ok=True)
+    receipt = build_execution_receipt(incident_dir, validation, packet_plan)
     (output_dir / "validation.json").write_text(
         json.dumps(validation, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
     (output_dir / "validation.md").write_text(
-        _markdown_report(validation),
+        _markdown_report(validation, packet_plan),
         encoding="utf-8",
     )
     (output_dir / "packet-plan.json").write_text(
         json.dumps(packet_plan, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    (output_dir / "execution-receipt.json").write_text(
+        json.dumps(receipt, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
     return output_dir
@@ -276,7 +342,7 @@ def main() -> int:
         validation = validate_incident(args.incident_dir)
         packet_plan = build_packet_plan(args.incident_dir, validation)
         if args.check_only:
-            print(json.dumps(validation, indent=2, sort_keys=True))
+            print(json.dumps({"validation": validation, "packet_plan": packet_plan}, indent=2, sort_keys=True))
         else:
             print(
                 write_outputs(
