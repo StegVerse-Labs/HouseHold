@@ -2,13 +2,27 @@ name: HEE Validate Synthetic Fixture
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "HEE/tools/validate_incident.py"
+      - "HEE/tests/**"
+      - "HEE/fixtures/minimal-incident/**"
+      - ".github/workflows/hee-validate.yml"
+  schedule:
+    - cron: "17 9 * * 1"
 
 permissions:
   contents: read
 
+concurrency:
+  group: hee-synthetic-validation-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   validate:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - name: Check out repository
@@ -28,11 +42,12 @@ jobs:
             HEE/fixtures/minimal-incident \
             --output-root out/hee
 
-      - name: Verify expected outputs
+      - name: Verify expected outputs and fail-closed state
         run: |
           test -f out/hee/minimal-incident/validation.json
           test -f out/hee/minimal-incident/validation.md
           test -f out/hee/minimal-incident/packet-plan.json
+          test -f out/hee/minimal-incident/execution-receipt.json
           python - <<'PY'
           import json
           from pathlib import Path
@@ -40,16 +55,25 @@ jobs:
           root = Path("out/hee/minimal-incident")
           validation = json.loads((root / "validation.json").read_text())
           plan = json.loads((root / "packet-plan.json").read_text())
+          receipt = json.loads((root / "execution-receipt.json").read_text())
 
           assert validation["status"] == "PASS", validation
           assert validation["errors"] == [], validation
+          assert plan["machine_state"] in {
+              "COMPLETE", "BLOCKED", "RETRY", "REVIEW_REQUIRED", "FAILED"
+          }, plan
+          assert plan["machine_state"] == "REVIEW_REQUIRED", plan
           assert plan["send_authorized"] is False, plan
+          assert receipt["machine_state"] == plan["machine_state"], receipt
+          assert receipt["send_authorized"] is False, receipt
+          assert receipt["repository_mutation_authorized"] is False, receipt
+          assert receipt["external_delivery_authorized"] is False, receipt
           PY
 
       - name: Upload validation outputs
         uses: actions/upload-artifact@v4
         with:
-          name: hee-minimal-incident-validation
+          name: hee-minimal-incident-validation-${{ github.run_id }}
           path: out/hee/minimal-incident/
           if-no-files-found: error
           retention-days: 30
