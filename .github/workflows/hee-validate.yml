@@ -6,6 +6,8 @@ on:
     branches: [main]
     paths:
       - "HEE/tools/validate_incident.py"
+      - "HEE/tools/verify_stegdb_hee_import.py"
+      - "HEE/canonical/**"
       - "HEE/tests/**"
       - "HEE/fixtures/minimal-incident/**"
       - ".github/workflows/hee-validate.yml"
@@ -42,20 +44,32 @@ jobs:
             HEE/fixtures/minimal-incident \
             --output-root out/hee
 
+      - name: Verify commit-pinned StegDB HEE package
+        run: |
+          python HEE/tools/verify_stegdb_hee_import.py \
+            --config HEE/canonical/stegdb-hee-v1-import.json \
+            --output-dir out/hee/canonical
+
       - name: Verify expected outputs and fail-closed state
         run: |
           test -f out/hee/minimal-incident/validation.json
           test -f out/hee/minimal-incident/validation.md
           test -f out/hee/minimal-incident/packet-plan.json
           test -f out/hee/minimal-incident/execution-receipt.json
+          test -f out/hee/canonical/import-validation.json
+          test -f out/hee/canonical/household-source-lock.json
           python - <<'PY'
           import json
           from pathlib import Path
 
-          root = Path("out/hee/minimal-incident")
-          validation = json.loads((root / "validation.json").read_text())
-          plan = json.loads((root / "packet-plan.json").read_text())
-          receipt = json.loads((root / "execution-receipt.json").read_text())
+          incident_root = Path("out/hee/minimal-incident")
+          validation = json.loads((incident_root / "validation.json").read_text())
+          plan = json.loads((incident_root / "packet-plan.json").read_text())
+          receipt = json.loads((incident_root / "execution-receipt.json").read_text())
+
+          canonical_root = Path("out/hee/canonical")
+          import_validation = json.loads((canonical_root / "import-validation.json").read_text())
+          source_lock = json.loads((canonical_root / "household-source-lock.json").read_text())
 
           assert validation["status"] == "PASS", validation
           assert validation["errors"] == [], validation
@@ -68,12 +82,25 @@ jobs:
           assert receipt["send_authorized"] is False, receipt
           assert receipt["repository_mutation_authorized"] is False, receipt
           assert receipt["external_delivery_authorized"] is False, receipt
+
+          assert import_validation["state"] == "COMPLETE", import_validation
+          assert import_validation["errors"] == [], import_validation
+          assert import_validation["repository_mutation_authorized"] is False
+          assert import_validation["external_delivery_authorized"] is False
+          assert import_validation["incident_data_modified"] is False
+          assert source_lock["validation_state"] == "COMPLETE", source_lock
+          assert source_lock["overlay_only"] is True, source_lock
+          assert source_lock["incident_data_modified"] is False, source_lock
+          assert len(source_lock["protocols"]) == 7, source_lock
           PY
 
       - name: Upload validation outputs
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: hee-minimal-incident-validation-${{ github.run_id }}
-          path: out/hee/minimal-incident/
+          name: hee-validation-${{ github.run_id }}
+          path: |
+            out/hee/minimal-incident/
+            out/hee/canonical/
           if-no-files-found: error
           retention-days: 30
