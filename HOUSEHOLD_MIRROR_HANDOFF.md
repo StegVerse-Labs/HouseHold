@@ -4,120 +4,151 @@
 
 Goal ID: `HOUSEHOLD-HEE-ACTIVATION-001`
 
-Activate a governed Household Escalation Engine path that validates incident structure, preserves evidence boundaries, consumes commit-pinned StegDB protocols, produces machine-owned receipts, and cannot silently authorize repository mutation or external delivery.
+Originating session goal: create and activate a governed Household Escalation Engine using StegDB as canonical protocol/schema authority and HouseHold as the real-incident proving ground.
 
 Repository: `StegVerse-Labs/HouseHold`
 Branch: `main`
 
+## Canonical Continuation
+
+MERGED INTO: `StegVerse-Labs/HouseHold/HOUSEHOLD_MIRROR_HANDOFF.md` and `HEE/task-registry/household-hee-activation.json`.
+
+Canonical protocol continuation:
+
+- `StegVerse-Labs/StegDB/STEGDB_MIRROR_HANDOFF.md`
+- `StegVerse-Labs/StegDB#9`
+- `StegVerse-Labs/StegDB#10`
+
+No future task requires access to the originating conversation. All unique requirements, decisions, implementation history, ownership, blockers, release conditions, and next actions are preserved here or in the task registry.
+
 ## Authoritative Records
 
 - `HOUSEHOLD_MIRROR_HANDOFF.md`
+- `HEE/task-registry/household-hee-activation.json`
 - `README.md`
 - `CONTRIBUTING.md`
 - `SECURITY.md`
 - `_new-incident-template/README.md`
 - `HEE/README.md`
 - `HEE/engine/packet-spec.md`
+- `HEE/engine/custody_ledger.py`
 - `HEE/fixtures/minimal-incident/`
 - `HEE/tools/validate_incident.py`
-- `HEE/tests/test_validate_incident.py`
-- `HEE/canonical/stegdb-hee-v1-import.json`
 - `HEE/tools/verify_stegdb_hee_import.py`
+- `HEE/tests/test_validate_incident.py`
+- `HEE/tests/test_custody_ledger.py`
+- `HEE/canonical/stegdb-hee-v1-import.json`
 - `.github/workflows/hee-validate.yml`
-- StegDB source handoff: `StegVerse-Labs/StegDB/STEGDB_MIRROR_HANDOFF.md`
-- StegDB tasks: issues `#9` and `#10`
 
-## Decisions Preserved
+## Preserved Decisions
 
 1. StegDB is the canonical protocol and schema authority.
 2. HouseHold contains real incident state and implementation evidence.
 3. HEE connects canonical rules to HouseHold workflows without replacing professional or human judgment.
 4. Facts, findings, evidence, provenance, custody, confidence, review state, and delivery state remain distinct.
 5. Confidence metadata is decision support, not proof, authentication, admissibility, or a legal conclusion.
-6. Original evidence must not be silently overwritten.
-7. Generated packet material remains draft until human review.
-8. Automation must fail closed and must never infer permission to send, publish, notify, or mutate.
-9. Public fixtures and CI data must remain synthetic or safely redacted.
-10. Canonical synchronization is commit-pinned, hash-bound, overlay-only, and non-destructive.
+6. Custody records do not establish truth, ownership, authority, or liability by themselves.
+7. Original evidence must not be silently overwritten.
+8. Generated packet material remains draft until human review.
+9. Automation must fail closed and never infer permission to send, publish, notify, or mutate.
+10. Public fixtures and CI data must remain synthetic or safely redacted.
+11. Canonical synchronization is commit-pinned, hash-bound, overlay-only, and non-destructive.
+12. External delivery is outside the current automation authority and remains false in receipts.
 
-## Execution Inventory
+## Session Goal Inventory
 
-### Complete and committed
+The complete inventory, claims, release conditions, collision boundaries, evidence locations, and next actions are machine-readable in:
 
-- Repository guidance and privacy boundary.
-- Synthetic incident fixture.
-- Read-only incident validator.
-- Dry-run packet planner.
-- Machine execution receipt and duplicate-execution key.
-- Five unit tests.
-- Push, schedule, and manual CI triggers.
-- Read-only workflow permissions and artifact upload.
-- Commit-pinned StegDB HEE import configuration.
-- Remote exact-byte import validator.
-- Generated HouseHold canonical import validation receipt.
-- Generated HouseHold source-lock receipt.
-- CI assertions that imported source is overlay-only and does not modify incident data.
+`HEE/task-registry/household-hee-activation.json`
 
-### Commit record
+Summary:
 
+- Canonical StegDB/HEE/HouseHold authority boundary: `COMPLETE`.
+- Repository guidance and incident-template correction: `COMPLETE`.
+- Synthetic incident validation and dry-run planning: `COMPLETE`.
+- Machine states, duplicate prevention, and receipts: `COMPLETE`.
+- Canonical HEE v1 contracts: `IMPLEMENTED_BUT_HOSTED_UNVALIDATED`.
+- Commit-pinned HouseHold canonical import: `IMPLEMENTED_BUT_HOSTED_UNVALIDATED`.
+- Append-only custody ledger: `IMPLEMENTED_BUT_HOSTED_UNVALIDATED`.
+- Reviewed packet generation: `BLOCKED` pending hosted canonical import and custody validation.
+- External delivery: `SUPERSEDED_BY_HUMAN_AUTHORITY_BOUNDARY`.
+- Site, Publisher, wiki, and master-record propagation: `NOT_YET_REQUIRED` because the capability is not release-ready.
+
+## Completed Implementation and Commits
+
+### HouseHold guidance and incident validation
+
+- `CONTRIBUTING.md`: `cc31bbb944df872c5192aa566017712d5fdd0cc3`
+- `SECURITY.md`: `505f55ea7f968940b1e856c841aaad417c9b3976`
+- `_new-incident-template/README.md`: `2cbc7387e589609be968fb0dc402d75581a2d4c5`
+- `HEE/README.md`: `f25e2225e262746023069974c88c3c113a305341`
 - Incident validator: `340d3755dc261c63dc976f105e20b8e419c8da09`
-- Five-test suite: `a8c80fdc2edfbeeacced54c42c81b3c8e9857aec`
-- Automated fixture workflow: `b554d65af2203bdc772f17be87d9b82d233e0c4d`
-- StegDB import config: `45d342c12b1ead5dc0908a5139275896d6561e32`
-- StegDB import validator: `6ccf6f2d3813f624c520139591b65697865da24c`
-- Integrated fixture + canonical workflow: `3c2b967c22e9abc91b525bf53ab16270b2b15a00`
+- Incident tests: `a8c80fdc2edfbeeacced54c42c81b3c8e9857aec`
+- Integrated validation workflow: `3c2b967c22e9abc91b525bf53ab16270b2b15a00`
 
-### Canonical source pin
+### Canonical import
 
-```text
-source repository: StegVerse-Labs/StegDB
-source commit: eb488813c4cf8b6baa76609f2aab90d7e6126fcd
-package manifest: protocols/hee/hee-v1-package.json
-required canonical files: 7
-```
+- Import configuration: `45d342c12b1ead5dc0908a5139275896d6561e32`
+- Import validator: `6ccf6f2d3813f624c520139591b65697865da24c`
+- Pinned StegDB package commit: `eb488813c4cf8b6baa76609f2aab90d7e6126fcd`
 
-The import validator:
+### Append-only custody ledger
 
-- fetches exact bytes from the pinned commit;
-- validates the package file list and fail-closed boundary flags;
-- validates JSON documents parse;
-- calculates SHA-256 for every imported protocol;
-- emits a duplicate execution key;
-- emits `COMPLETE`, `BLOCKED`, `RETRY`, `REVIEW_REQUIRED`, or `FAILED`;
-- emits the next executable task;
-- keeps repository mutation, incident mutation, and external delivery unauthorized.
+- `HEE/engine/custody_ledger.py`: `d8831ecfc16be8505be74e44340eb05f37670e3e`
+- `HEE/tests/test_custody_ledger.py`: `d1ffa4177eb10e736f52518b97119b0a5a7eb772`
 
-### Implemented but hosted-unvalidated
+The custody engine:
 
-- The current workflow revision has not yet produced a directly inspected Actions run, job log, or artifact through the available status surface.
-- Combined-status lookup for commit `3c2b967c22e9abc91b525bf53ab16270b2b15a00` returned no status entries.
+- validates the canonical `custody-transition-v1` shape used by HouseHold;
+- enforces sequence `1` for the first transition;
+- enforces monotonically increasing sequence numbers;
+- enforces `previous_transition_id` continuity;
+- rejects duplicate transition IDs;
+- rejects item-ID changes within a ledger;
+- rejects truth, ownership, or authority boundary violations;
+- writes the ledger only after validation succeeds;
+- leaves the ledger byte-identical when validation fails;
+- emits a fail-closed append receipt with all authority and delivery flags false.
 
-### Missing or blocked
+### Session consolidation
 
-- Hosted StegDB canonical-package validation receipt inspection.
-- Hosted HouseHold exact-byte import and source-lock receipt inspection.
-- Production append-only custody-event implementation.
-- Reviewed packet generation.
-- External delivery remains intentionally unimplemented and unauthorized.
+- Task and claim registry: `6469464a42439c6d980e71343e9989a8785f39dc`
+
+## Claims and Duplicate-Execution Control
+
+Canonical claim registry:
+
+`HEE/task-registry/household-hee-activation.json`
+
+Current claims:
+
+- `HEE-CANONICAL-PROTOCOL-V1`: `MACHINE_OWNED` by the StegDB HEE validation job.
+- `HEE-HOUSEHOLD-IMPORT-V1`: `MACHINE_OWNED` by the HouseHold validation workflow.
+- `HEE-CUSTODY-LEDGER-V1`: `CLAIMED_FOR_VALIDATION` by the HouseHold custody engine and tests.
+- `HEE-REVIEWED-PACKET-V1`: `BLOCKED` until canonical import and custody hosted validation are complete.
+
+No conflicting active claim was found in the inspected repositories. Duplicate StegDB issue `#11` was closed as a duplicate of issue `#10`.
 
 ## Machine-Owned Continuation
 
-Owner repository: `StegVerse-Labs/HouseHold`
-Owner workflow: `.github/workflows/hee-validate.yml`
+### HouseHold workflow
+
+Owner: `.github/workflows/hee-validate.yml`
 
 Triggers:
 
-- push to `main` affecting the incident validator, import validator, source config, tests, synthetic fixture, or workflow;
+- push to `main` affecting HEE validators, tests, fixture, canonical import, or workflow;
 - weekly schedule at `17 9 * * 1`;
 - manual dispatch.
 
-Deterministic inputs:
+Inputs:
 
-- synthetic HouseHold fixture;
+- synthetic incident fixture;
 - commit-pinned StegDB import configuration;
-- exact remote bytes from the pinned StegDB commit.
+- exact remote bytes from the pinned StegDB commit;
+- custody unit tests under `HEE/tests/`.
 
-Persisted outputs:
+Outputs:
 
 ```text
 out/hee/minimal-incident/validation.json
@@ -128,24 +159,29 @@ out/hee/canonical/import-validation.json
 out/hee/canonical/household-source-lock.json
 ```
 
-Artifact:
+Artifact: `hee-validation-<github.run_id>`.
 
-```text
-hee-validation-<github.run_id>
-```
+### StegDB workflow
 
-Fail-closed assertions:
+Owner: `StegVerse-Labs/StegDB/.github/workflows/stegdb-central.yml#hee-protocol-validation`
 
-- incident `send_authorized == false`;
-- incident `repository_mutation_authorized == false`;
-- incident `external_delivery_authorized == false`;
-- canonical import `repository_mutation_authorized == false`;
-- canonical import `external_delivery_authorized == false`;
-- canonical import `incident_data_modified == false`;
-- source lock `overlay_only == true`;
-- source lock contains exactly seven canonical protocol hashes.
+Output: `meta/hee_v1_protocol_validation.json` in artifact `hee-v1-protocol-validation-<run_id>`.
 
-## Validation Commands
+## Validation State
+
+Verified by repository inspection:
+
+- production files exist on `main`;
+- source consumption is pinned to a StegDB commit;
+- workflows have read-only repository permission;
+- no workflow commits generated output;
+- no workflow sends letters, evidence, notifications, or external communications;
+- custody failures do not mutate the ledger;
+- all authority and delivery boundaries are explicitly false in receipts.
+
+Hosted validation remains pending because the available status surface returned no run status entries for the latest workflow commits. Workflow success, artifact creation, exact-byte remote retrieval, and cross-repository integration are therefore not yet claimed.
+
+Validation commands:
 
 ```text
 python -m unittest discover -s HEE/tests -p 'test_*.py'
@@ -153,58 +189,84 @@ python HEE/tools/validate_incident.py HEE/fixtures/minimal-incident --output-roo
 python HEE/tools/verify_stegdb_hee_import.py --config HEE/canonical/stegdb-hee-v1-import.json --output-dir out/hee/canonical
 ```
 
-Hosted validation is complete only after direct inspection of the run, job steps/logs, and uploaded artifact.
+## Exact Remaining Tasks and Owners
 
-## Blockers and Machine-Observable Release Conditions
+1. Hosted StegDB package validation
+   - Location: `StegVerse-Labs/StegDB/.github/workflows/stegdb-central.yml#hee-protocol-validation`
+   - State: `MACHINE_OWNED`
+   - Release condition: receipt reports `COMPLETE` and artifact is inspected.
 
-### StegDB package validation
+2. Hosted HouseHold incident, import, and custody validation
+   - Location: `.github/workflows/hee-validate.yml`
+   - State: `MACHINE_OWNED`
+   - Release condition: tests pass; import and source-lock report `COMPLETE`; artifact is inspected.
 
-State: `RETRY`
-Owner: `StegVerse-Labs/StegDB/.github/workflows/stegdb-central.yml`
-Release condition: the HEE validation job reports `COMPLETE` and its artifact contains a valid `meta/hee_v1_protocol_validation.json` for the pinned package.
+3. Reviewed packet generation
+   - Required locations: `HEE/engine/packet_generator.py`, `HEE/tools/generate_packet.py`, `HEE/tests/test_packet_generator.py`
+   - State: `BLOCKED`
+   - Owner: next authorized HouseHold build lane after tasks 1 and 2 release.
+   - Release condition: hosted canonical import and custody validation are complete.
+   - Boundaries: valid source lock and custody state required; human review required; `delivery_authorized` remains false.
 
-### HouseHold import validation
+4. Publication and propagation
+   - State: `NOT_YET_REQUIRED`
+   - Release condition: reviewed packet generation reaches release readiness and a publication contract identifies Site, Publisher, wiki, or master-record destinations.
 
-State: `RETRY`
-Owner: `.github/workflows/hee-validate.yml`
-Release condition: a completed run fetches all seven pinned files, records their SHA-256 values, reports `COMPLETE`, and uploads both import receipts.
+No task is unspecified or owned only by this conversation.
 
-### Human packet review
+## Session Consolidation
 
-State: `REVIEW_REQUIRED`
-Owner: named human authority for the specific incident.
-Release condition: facts, recipient, remedy, attachments, uncertainty, and delivery method are reviewed and recorded. This does not automatically authorize delivery.
+Session state: `MERGED_INTO_CANONICAL_WORKSTREAM`.
 
-## Exact Next Tasks
+Transferred from the originating conversation:
 
-1. `StegVerse-Labs/StegDB/.github/workflows/stegdb-central.yml`
-   - observe the HEE package validation job and artifact.
+- every architecture and authority decision;
+- all completed commit references;
+- all unresolved tasks and blockers;
+- exact repository and file destinations;
+- machine and human ownership boundaries;
+- claim states and collision boundaries;
+- validation commands and release conditions;
+- propagation posture;
+- percentage denominators;
+- archival conditions.
 
-2. `StegVerse-Labs/HouseHold/.github/workflows/hee-validate.yml`
-   - observe exact-byte import, fixture validation, source-lock generation, and combined artifact.
-
-3. `StegVerse-Labs/HouseHold/HEE/`
-   - after hosted source-lock validation, implement append-only custody events against the canonical custody schema.
-
-4. `StegVerse-Labs/HouseHold/HEE/`
-   - implement reviewed packet generation only after custody state and source lock are valid.
-
-## Archive Conditions
-
-Active work remains until hosted StegDB validation, hosted HouseHold import validation, artifact inspection, append-only custody implementation, and reviewed packet generation are completed or formally superseded.
+The conversation owns no remaining implementation, validation, integration, propagation, reconciliation, or observation claim. Repository workflows and the task registry own continuation.
 
 ## Percentages
 
-Task denominator: 20 deliverables.
+Task denominator: 22 canonical deliverables.
 
-- complete and committed: 15;
-- implemented but hosted-unvalidated: 2;
-- missing or blocked: 3.
+- complete and committed: 18;
+- implemented but hosted-unvalidated: 3;
+- blocked: 1.
 
-Developed-file denominator: 14 required HouseHold files for the current activation slice.
+Developed-file denominator: 15 required HouseHold production or validation files.
 
-- developed: 12;
+- developed: 14;
 - scaffolding/stubs: 0;
-- missing: 2, consisting of append-only custody implementation and reviewed packet generation.
+- missing: 1 (`HEE` reviewed packet generator set, counted as one capability deliverable).
 
-Goal activation remains incomplete because hosted evidence and the final two production capabilities are not yet verified.
+Validation denominator: 5 validation levels for this goal.
+
+- validated: 3 (file presence/static inspection, deterministic local design evidence, unit-test implementation);
+- pending: 2 (hosted workflow execution and artifact inspection).
+
+Integration denominator: 4 integrations.
+
+- integrated: 3 (StegDB contracts, pinned HouseHold consumer, custody engine against canonical contract);
+- pending: 1 (reviewed packet generator).
+
+Session consolidation: 10/10 session goals transferred or complete.
+
+## Archive Conditions
+
+The originating conversation is safe to archive now because:
+
+- all unique information has been committed to this handoff and the task registry;
+- all remaining work has named repository-native or human owners;
+- every blocker has a machine-observable release condition;
+- no active claim depends on undocumented conversation state;
+- deleting the conversation would not impair execution.
+
+Project activation remains incomplete, but session continuity no longer depends on this conversation.
