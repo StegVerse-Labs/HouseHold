@@ -1,0 +1,83 @@
+{
+  "schema_version": "stegverse-session-consolidation-v1",
+  "goal_id": "HOUSEHOLD-HEE-ACTIVATION-001",
+  "originating_session_goal": "Create and activate a governed Household Escalation Engine using StegDB as canonical protocol authority and HouseHold as the real-incident proving ground.",
+  "canonical_continuation": {
+    "repository": "StegVerse-Labs/HouseHold",
+    "branch": "main",
+    "handoff": "HOUSEHOLD_MIRROR_HANDOFF.md",
+    "task_registry": "HEE/task-registry/household-hee-activation.json",
+    "canonical_protocol_issue": "StegVerse-Labs/StegDB#9",
+    "canonical_validation_issue": "StegVerse-Labs/StegDB#10"
+  },
+  "claims": [
+    {
+      "task_id": "HEE-CANONICAL-PROTOCOL-V1",
+      "status": "MACHINE_OWNED",
+      "role": "VALIDATION",
+      "owner": "StegVerse-Labs/StegDB/.github/workflows/stegdb-central.yml#hee-protocol-validation",
+      "surfaces": ["protocols/hee/**", "protocols/custody/custody-transition-v1.schema.json", "protocols/notifications/custody-notification-v1.schema.json", "examples/hee-v1/**", "tools/validate_hee_protocol_package.py"],
+      "claim_created_at": "2026-08-02T08:05:06Z",
+      "release_condition": "A hosted workflow receipt reports COMPLETE and its artifact is inspected.",
+      "expected_evidence": "meta/hee_v1_protocol_validation.json",
+      "collision_boundary": "No other session should create competing canonical HEE v1 schemas in HouseHold or another repository.",
+      "next_task_after_release": "Validate the HouseHold commit-pinned import and source-lock receipt."
+    },
+    {
+      "task_id": "HEE-HOUSEHOLD-IMPORT-V1",
+      "status": "MACHINE_OWNED",
+      "role": "INTEGRATION",
+      "owner": "StegVerse-Labs/HouseHold/.github/workflows/hee-validate.yml",
+      "surfaces": ["HEE/canonical/stegdb-hee-v1-import.json", "HEE/tools/verify_stegdb_hee_import.py"],
+      "claim_created_at": "2026-08-02T08:12:00Z",
+      "release_condition": "A hosted workflow artifact contains COMPLETE import validation and source-lock receipts for the pinned StegDB commit.",
+      "expected_evidence": "out/hee/canonical/import-validation.json and out/hee/canonical/household-source-lock.json",
+      "collision_boundary": "No full-folder canonical sync and no unpinned import implementation.",
+      "next_task_after_release": "Permit custody and packet engines to require the validated source lock."
+    },
+    {
+      "task_id": "HEE-CUSTODY-LEDGER-V1",
+      "status": "CLAIMED_FOR_VALIDATION",
+      "role": "IMPLEMENTATION_AND_VALIDATION",
+      "owner": "StegVerse-Labs/HouseHold/HEE/engine/custody_ledger.py",
+      "surfaces": ["HEE/engine/custody_ledger.py", "HEE/tests/test_custody_ledger.py"],
+      "claim_created_at": "2026-08-02T08:17:00Z",
+      "release_condition": "Hosted HouseHold validation executes custody tests successfully and records the workflow evidence.",
+      "expected_evidence": "GitHub Actions job and artifact from .github/workflows/hee-validate.yml",
+      "collision_boundary": "Do not create a second custody ledger engine or treat custody records as truth, ownership, or authority.",
+      "next_task_after_release": "Integrate reviewed packet generation with custody and source-lock validation."
+    },
+    {
+      "task_id": "HEE-REVIEWED-PACKET-V1",
+      "status": "BLOCKED",
+      "role": "IMPLEMENTATION",
+      "owner": "StegVerse-Labs/HouseHold/HEE/engine and HEE/tools",
+      "surfaces": ["HEE/engine/packet_generator.py", "HEE/tools/generate_packet.py", "HEE/tests/test_packet_generator.py"],
+      "claim_created_at": "2026-08-02T08:17:00Z",
+      "release_condition": "Canonical import and custody ledger hosted validation are COMPLETE.",
+      "expected_evidence": "Fail-closed packet manifest and review receipt; delivery_authorized remains false.",
+      "collision_boundary": "No external delivery, no automatic human-review assertion, and no packet generation without source-lock and custody validation.",
+      "next_task_after_release": "Implement packet manifest generation and human review receipt."
+    }
+  ],
+  "session_goal_inventory": [
+    {"goal": "Canonical StegDB/HEE/HouseHold authority boundary", "state": "COMPLETE", "evidence": "HOUSEHOLD_MIRROR_HANDOFF.md and StegVerse-Labs/StegDB#9"},
+    {"goal": "Repository guidance and incident template correction", "state": "COMPLETE", "evidence": "CONTRIBUTING.md, SECURITY.md, _new-incident-template/README.md, HEE/README.md"},
+    {"goal": "Synthetic incident validation and dry-run planning", "state": "COMPLETE", "evidence": "HEE/tools/validate_incident.py and HEE/tests/test_validate_incident.py"},
+    {"goal": "Machine states, duplicate prevention, and receipts", "state": "COMPLETE", "evidence": "execution-receipt.json generation and this task registry"},
+    {"goal": "Canonical HEE v1 contracts", "state": "IMPLEMENTED_BUT_HOSTED_UNVALIDATED", "evidence": "StegVerse-Labs/StegDB protocols/hee, examples/hee-v1, tools/validate_hee_protocol_package.py"},
+    {"goal": "Commit-pinned HouseHold canonical import", "state": "IMPLEMENTED_BUT_HOSTED_UNVALIDATED", "evidence": "HEE/canonical/stegdb-hee-v1-import.json and HEE/tools/verify_stegdb_hee_import.py"},
+    {"goal": "Append-only custody ledger", "state": "IMPLEMENTED_BUT_HOSTED_UNVALIDATED", "evidence": "HEE/engine/custody_ledger.py and HEE/tests/test_custody_ledger.py"},
+    {"goal": "Reviewed packet generation", "state": "BLOCKED", "evidence": "This registry entry HEE-REVIEWED-PACKET-V1"},
+    {"goal": "External delivery", "state": "SUPERSEDED_BY_HUMAN_AUTHORITY_BOUNDARY", "evidence": "HEE/README.md and workflow fail-closed assertions"},
+    {"goal": "Site, Publisher, wiki, or master-record propagation", "state": "NOT_YET_REQUIRED", "evidence": "HOUSEHOLD_MIRROR_HANDOFF.md; capability is not release-ready"}
+  ],
+  "session_consolidation": {
+    "state": "MERGED_INTO_CANONICAL_WORKSTREAM",
+    "merged_into": "StegVerse-Labs/HouseHold/HOUSEHOLD_MIRROR_HANDOFF.md and HEE/task-registry/household-hee-activation.json",
+    "unique_requirements_transferred": true,
+    "unassigned_work_remaining": false,
+    "conflicting_active_claims_detected": false,
+    "archive_condition": "This conversation may be archived once the handoff points to this registry and records the custody implementation commits; all remaining work is repository-owned or machine-owned."
+  }
+}
