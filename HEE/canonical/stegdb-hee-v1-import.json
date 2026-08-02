@@ -1,0 +1,19 @@
+{
+  "schema_version": "household-hee-import-config-v1",
+  "goal_id": "HOUSEHOLD-HEE-ACTIVATION-001",
+  "source_repository": "StegVerse-Labs/StegDB",
+  "source_commit_sha": "eb488813c4cf8b6baa76609f2aab90d7e6126fcd",
+  "consumer_repository": "StegVerse-Labs/HouseHold",
+  "package_manifest_path": "protocols/hee/hee-v1-package.json",
+  "required_paths": [
+    "protocols/hee/artifact-record-v1.schema.json",
+    "protocols/hee/packet-manifest-v1.schema.json",
+    "protocols/hee/evidence-confidence-v1.md",
+    "protocols/hee/evidence-confidence-override-receipt-v1.schema.json",
+    "protocols/custody/custody-transition-v1.schema.json",
+    "protocols/notifications/custody-notification-v1.schema.json",
+    "protocols/hee/household-source-lock-v1.schema.json"
+  ],
+  "overlay_only": true,
+  "incident_data_modified": false
+}
