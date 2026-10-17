@@ -11,8 +11,14 @@ on:
       - "HEE/tests/**"
       - "HEE/fixtures/minimal-incident/**"
       - ".github/workflows/hee-validate.yml"
-  schedule:
-    - cron: "17 9 * * 1"
+  pull_request:
+    paths:
+      - "HEE/tools/validate_incident.py"
+      - "HEE/tools/verify_stegdb_hee_import.py"
+      - "HEE/canonical/**"
+      - "HEE/tests/**"
+      - "HEE/fixtures/minimal-incident/**"
+      - ".github/workflows/hee-validate.yml"
 
 permissions:
   contents: read
