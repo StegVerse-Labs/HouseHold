@@ -6,8 +6,6 @@ import hashlib
 import json
 import os
 import sys
-import urllib.error
-import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -32,18 +30,56 @@ def load_json_bytes(data: bytes, label: str) -> dict[str, Any]:
     return parsed
 
 
-def fetch_bytes(repository: str, commit: str, path: str, timeout: int = 20) -> bytes:
-    owner, name = repository.split("/", 1)
-    url = f"https://raw.githubusercontent.com/{owner}/{name}/{commit}/{path}"
-    request = urllib.request.Request(
-        url,
-        headers={
-            "Accept": "application/vnd.github.raw",
-            "User-Agent": "HouseHold-HEE-Canonical-Import/1.0",
-        },
-    )
-    with urllib.request.urlopen(request, timeout=timeout) as response:
-        return response.read()
+class PinError(Exception):
+    """Vendored bytes are missing or do not match the pin manifest."""
+
+    def __init__(self, code: str, detail: str) -> None:
+        super().__init__(f"{code}: {detail}")
+        self.code = code
+        self.detail = detail
+
+
+def load_pin(config: dict[str, Any]) -> dict[str, Any]:
+    pin_rel = config.get("pin_manifest_path")
+    if not isinstance(pin_rel, str) or not pin_rel:
+        raise PinError("missing_pin_manifest_path", "config must name pin_manifest_path")
+    pin_path = ROOT / pin_rel
+    if not pin_path.is_file():
+        raise PinError("pin_manifest_missing", pin_rel)
+    pin = load_json_bytes(pin_path.read_bytes(), pin_rel)
+    if pin.get("schema_version") != "household-hee-vendored-pin-v1":
+        raise PinError("wrong_pin_version", str(pin.get("schema_version")))
+    if pin.get("source_repository") != config.get("source_repository"):
+        raise PinError("pin_repository_mismatch", str(pin.get("source_repository")))
+    if pin.get("source_commit_sha") != config.get("source_commit_sha"):
+        raise PinError("pin_commit_mismatch", str(pin.get("source_commit_sha")))
+    files = pin.get("files")
+    if not isinstance(files, list) or not files:
+        raise PinError("pin_files_missing", "pin manifest must list files")
+    return pin
+
+
+def read_pinned_bytes(pin: dict[str, Any], path: str) -> bytes:
+    """Return the vendored bytes for path after checking their sha256 against the pin.
+
+    Evidence travels as bytes rather than as a reachability promise
+    (StegVerse-org/.github docs/ORGANIZATION_ROLE_RUNTIME_REALITY_DEPLOYMENT.md L33),
+    so no network request is made here.
+    """
+    entries = [item for item in pin["files"] if isinstance(item, dict) and item.get("path") == path]
+    if len(entries) != 1:
+        raise PinError("path_not_pinned", path)
+    entry = entries[0]
+    vendored = ROOT / pin["vendor_root"] / path
+    if not vendored.is_file():
+        raise PinError("vendored_bytes_missing", str(vendored.relative_to(ROOT)))
+    data = vendored.read_bytes()
+    digest = sha256_bytes(data)
+    if digest != entry.get("sha256"):
+        raise PinError("vendored_sha256_mismatch", f"{path}: expected {entry.get('sha256')}, got {digest}")
+    if len(data) != entry.get("size_bytes"):
+        raise PinError("vendored_size_mismatch", f"{path}: expected {entry.get('size_bytes')}, got {len(data)}")
+    return data
 
 
 def validate_config(config: dict[str, Any]) -> list[dict[str, str]]:
@@ -94,10 +130,10 @@ def run_import(config_path: Path, output_dir: Path) -> tuple[dict[str, Any], dic
 
     if not errors:
         repository = config["source_repository"]
-        commit = config["source_commit_sha"]
         package_path = config["package_manifest_path"]
         try:
-            package_bytes = fetch_bytes(repository, commit, package_path)
+            pin = load_pin(config)
+            package_bytes = read_pinned_bytes(pin, package_path)
             package = load_json_bytes(package_bytes, package_path)
             package_files = package.get("files", [])
             if package.get("schema_version") != "hee-v1-package-manifest-v1":
@@ -120,7 +156,7 @@ def run_import(config_path: Path, output_dir: Path) -> tuple[dict[str, Any], dic
                     errors.append({"code": "package_boundary_not_fail_closed", "detail": key})
 
             for path in config["required_paths"]:
-                data = fetch_bytes(repository, commit, path)
+                data = read_pinned_bytes(pin, path)
                 if path.endswith(".json"):
                     load_json_bytes(data, path)
                 fetched.append(
@@ -130,12 +166,9 @@ def run_import(config_path: Path, output_dir: Path) -> tuple[dict[str, Any], dic
                         "size_bytes": len(data),
                     }
                 )
-        except urllib.error.HTTPError as exc:
-            errors.append({"code": "source_http_error", "detail": f"{exc.code}: {exc.reason}"})
-            state = "BLOCKED" if exc.code in {401, 403, 404} else "RETRY"
-        except (urllib.error.URLError, TimeoutError) as exc:
-            errors.append({"code": "source_unavailable", "detail": str(exc)})
-            state = "RETRY"
+        except PinError as exc:
+            errors.append({"code": exc.code, "detail": exc.detail})
+            state = "FAILED"
         except (OSError, ValueError, KeyError) as exc:
             errors.append({"code": "source_validation_error", "detail": str(exc)})
             state = "FAILED"
@@ -157,8 +190,8 @@ def run_import(config_path: Path, output_dir: Path) -> tuple[dict[str, Any], dic
 
     next_task = {
         "COMPLETE": "Use this source-lock receipt as the canonical input to HouseHold HEE validation.",
-        "BLOCKED": "Restore read access to the pinned StegDB commit or replace it with an authorized accessible commit.",
-        "RETRY": "Retry the import after source connectivity recovers.",
+        "BLOCKED": "Vendor the exact StegDB bytes for the pinned commit and record their sha256 in the pin manifest.",
+        "RETRY": "Rerun the import validator against the vendored pinned bytes.",
         "REVIEW_REQUIRED": "Review the imported protocol boundaries before use.",
         "FAILED": "Correct the first validation error and rerun the import validator.",
     }[state]
@@ -215,7 +248,7 @@ def run_import(config_path: Path, output_dir: Path) -> tuple[dict[str, Any], dic
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Verify and lock the commit-pinned StegDB HEE v1 package.")
+    parser = argparse.ArgumentParser(description="Verify and lock the vendored, sha256-pinned StegDB HEE v1 package (no network).")
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT)
     args = parser.parse_args()

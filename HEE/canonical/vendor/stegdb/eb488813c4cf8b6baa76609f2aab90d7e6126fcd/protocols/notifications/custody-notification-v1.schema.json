@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stegverse.org/schemas/notifications/custody-notification-v1.schema.json",
+  "title": "Custody Notification v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "notification_id", "transition_id", "event_type", "recipient_ref", "created_at", "delivery_state", "acknowledgement_state", "establishes_authority", "establishes_truth"],
+  "properties": {
+    "schema_version": {"const": "custody-notification-v1"},
+    "notification_id": {"type": "string", "minLength": 1},
+    "transition_id": {"type": "string", "minLength": 1},
+    "event_type": {"type": "string", "enum": ["TRANSITION_PROPOSED", "TRANSITION_ACKNOWLEDGED", "TRANSITION_CONTESTED", "TRANSITION_CONFIRMED", "TRANSITION_EXPIRED", "TRANSITION_REVOKED"]},
+    "recipient_ref": {"type": "string", "minLength": 1},
+    "created_at": {"type": "string", "format": "date-time"},
+    "delivery_state": {"type": "string", "enum": ["PENDING", "DELIVERED", "FAILED", "SUPPRESSED"]},
+    "delivered_at": {"type": ["string", "null"], "format": "date-time"},
+    "acknowledgement_state": {"type": "string", "enum": ["NOT_REQUIRED", "PENDING", "ACKNOWLEDGED", "CONTESTED", "EXPIRED"]},
+    "acknowledged_at": {"type": ["string", "null"], "format": "date-time"},
+    "channel": {"type": ["string", "null"], "enum": ["EMAIL", "SMS", "PUSH", "IN_APP", "WEBHOOK", "OTHER", null]},
+    "message_class": {"type": "string", "enum": ["MINIMAL", "STANDARD"]},
+    "establishes_authority": {"const": false},
+    "establishes_truth": {"const": false},
+    "privacy_redactions_applied": {"type": "boolean"},
+    "failure_reason": {"type": ["string", "null"]}
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stegverse.org/schemas/hee/evidence-confidence-override-receipt-v1.schema.json",
+  "title": "HEE Evidence Confidence Override Receipt v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "override_id", "artifact_id", "prior_assessment_id", "actor", "authority_basis", "rationale", "recorded_at", "does_not_authenticate_evidence"],
+  "properties": {
+    "schema_version": {"const": "hee-confidence-override-receipt-v1"},
+    "override_id": {"type": "string", "minLength": 1},
+    "artifact_id": {"type": "string", "minLength": 1},
+    "prior_assessment_id": {"type": "string", "minLength": 1},
+    "replacement_assessment_id": {"type": ["string", "null"]},
+    "replacement_use_state": {"type": ["string", "null"], "enum": ["INCLUDE", "EXCLUDE", "REVIEW_REQUIRED", null]},
+    "actor": {"type": "string", "minLength": 1},
+    "authority_basis": {"type": "string", "minLength": 1},
+    "rationale": {"type": "string", "minLength": 1},
+    "recorded_at": {"type": "string", "format": "date-time"},
+    "does_not_authenticate_evidence": {"const": true},
+    "signature_ref": {"type": ["string", "null"]}
+  },
+  "anyOf": [
+    {"required": ["replacement_assessment_id"]},
+    {"required": ["replacement_use_state"]}
+  ]
+}

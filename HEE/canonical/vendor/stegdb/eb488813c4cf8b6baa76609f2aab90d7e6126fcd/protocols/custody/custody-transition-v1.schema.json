@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stegverse.org/schemas/custody/custody-transition-v1.schema.json",
+  "title": "Custody Transition v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "transition_id", "item_id", "sequence", "state", "initiated_by", "current_custodian", "proposed_custodian", "recorded_at", "authority_effect", "truth_effect", "ownership_effect"],
+  "properties": {
+    "schema_version": {"const": "custody-transition-v1"},
+    "transition_id": {"type": "string", "minLength": 1},
+    "item_id": {"type": "string", "minLength": 1},
+    "sequence": {"type": "integer", "minimum": 1},
+    "previous_transition_id": {"type": ["string", "null"]},
+    "state": {"type": "string", "enum": ["PROPOSED", "ACKNOWLEDGED", "CONTESTED", "CONFIRMED", "EXPIRED", "REVOKED"]},
+    "initiated_by": {"type": "string", "minLength": 1},
+    "current_custodian": {"type": "string", "minLength": 1},
+    "proposed_custodian": {"type": "string", "minLength": 1},
+    "recorded_at": {"type": "string", "format": "date-time"},
+    "effective_at": {"type": ["string", "null"], "format": "date-time"},
+    "location_note": {"type": ["string", "null"]},
+    "evidence_refs": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "notification_refs": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "authority_effect": {"const": "NONE_BY_RECORD_ALONE"},
+    "truth_effect": {"const": "NONE_BY_RECORD_ALONE"},
+    "ownership_effect": {"const": "NONE_BY_RECORD_ALONE"}
+  }
+}

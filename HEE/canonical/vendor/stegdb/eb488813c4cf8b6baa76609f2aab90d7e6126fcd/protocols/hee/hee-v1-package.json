@@ -1,0 +1,39 @@
+{
+  "schema_version": "hee-v1-package-manifest-v1",
+  "goal_id": "HOUSEHOLD-HEE-ACTIVATION-001",
+  "owner_repository": "StegVerse-Labs/StegDB",
+  "consumer_repository": "StegVerse-Labs/HouseHold",
+  "protocol_version": "1.0.0",
+  "files": [
+    "protocols/hee/artifact-record-v1.schema.json",
+    "protocols/hee/packet-manifest-v1.schema.json",
+    "protocols/hee/evidence-confidence-v1.md",
+    "protocols/hee/evidence-confidence-override-receipt-v1.schema.json",
+    "protocols/custody/custody-transition-v1.schema.json",
+    "protocols/notifications/custody-notification-v1.schema.json",
+    "protocols/hee/household-source-lock-v1.schema.json"
+  ],
+  "examples": [
+    "examples/hee-v1/artifact-record.json",
+    "examples/hee-v1/packet-manifest.json",
+    "examples/hee-v1/confidence-override-receipt.json",
+    "examples/hee-v1/custody-transition.json",
+    "examples/hee-v1/custody-notification.json",
+    "examples/hee-v1/household-source-lock.json"
+  ],
+  "validator": "tools/validate_hee_protocol_package.py",
+  "workflow": ".github/workflows/stegdb-central.yml",
+  "compatibility": {
+    "legacy_artifact_schema": "superseded_for_new_integrations",
+    "legacy_confidence_policy": "superseded_where_conflicting",
+    "legacy_custody_schema": "superseded_for_new_integrations",
+    "legacy_notification_policy": "historical_guidance"
+  },
+  "boundaries": {
+    "authenticates_evidence": false,
+    "establishes_truth": false,
+    "establishes_ownership": false,
+    "authorizes_delivery": false,
+    "modifies_incident_data": false
+  }
+}
