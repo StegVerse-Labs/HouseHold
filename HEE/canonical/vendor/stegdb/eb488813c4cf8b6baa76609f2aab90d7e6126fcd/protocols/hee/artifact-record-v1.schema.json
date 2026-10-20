@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stegverse.org/schemas/hee/artifact-record-v1.schema.json",
+  "title": "HEE Artifact Record v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_id", "artifact_type", "sha256", "observed_at", "source", "transformations", "confidence"],
+  "properties": {
+    "schema_version": {"const": "hee-artifact-record-v1"},
+    "artifact_id": {"type": "string", "minLength": 1},
+    "artifact_type": {"type": "string", "enum": ["photo", "video", "document", "communication", "estimate", "contract", "report", "log", "other"]},
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "observed_at": {"type": "string", "format": "date-time"},
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["origin_class", "reference"],
+      "properties": {
+        "origin_class": {"type": "string", "enum": ["owner", "counterparty", "third_party", "system", "unknown"]},
+        "reference": {"type": "string", "minLength": 1},
+        "note": {"type": "string"}
+      }
+    },
+    "transformations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["transformation_id", "action", "at", "actor", "output_sha256"],
+        "properties": {
+          "transformation_id": {"type": "string", "minLength": 1},
+          "action": {"type": "string", "enum": ["redacted", "cropped", "converted", "compressed", "annotated", "other"]},
+          "at": {"type": "string", "format": "date-time"},
+          "actor": {"type": "string", "minLength": 1},
+          "output_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "note": {"type": "string"}
+        }
+      }
+    },
+    "confidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["assessment_id", "state", "factors", "limitations", "computed_at", "algorithm_version"],
+      "properties": {
+        "assessment_id": {"type": "string", "minLength": 1},
+        "state": {"type": "string", "enum": ["UNASSESSED", "REVIEW_REQUIRED", "ASSESSED"]},
+        "score": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+        "band": {"type": ["string", "null"], "enum": ["weak", "moderate", "strong", "very-strong", null]},
+        "factors": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "limitations": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "computed_at": {"type": "string", "format": "date-time"},
+        "algorithm_version": {"type": "string", "minLength": 1},
+        "override_receipt_ref": {"type": ["string", "null"]}
+      }
+    }
+  }
+}

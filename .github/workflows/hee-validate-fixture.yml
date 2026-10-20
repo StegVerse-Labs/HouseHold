@@ -10,9 +10,15 @@ on:
       - "HEE/canonical/**"
       - "HEE/tests/**"
       - "HEE/fixtures/minimal-incident/**"
-      - ".github/workflows/hee-validate.yml"
-  schedule:
-    - cron: "17 9 * * 1"
+      - ".github/workflows/hee-validate-fixture.yml"
+  pull_request:
+    paths:
+      - "HEE/tools/validate_incident.py"
+      - "HEE/tools/verify_stegdb_hee_import.py"
+      - "HEE/canonical/**"
+      - "HEE/tests/**"
+      - "HEE/fixtures/minimal-incident/**"
+      - ".github/workflows/hee-validate-fixture.yml"
 
 permissions:
   contents: read
@@ -44,7 +50,7 @@ jobs:
             HEE/fixtures/minimal-incident \
             --output-root out/hee
 
-      - name: Verify commit-pinned StegDB HEE package
+      - name: Verify vendored sha256-pinned StegDB HEE package (no network)
         run: |
           python HEE/tools/verify_stegdb_hee_import.py \
             --config HEE/canonical/stegdb-hee-v1-import.json \

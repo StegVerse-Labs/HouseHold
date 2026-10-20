@@ -1,0 +1,58 @@
+{
+  "schema_version": "household-hee-vendored-pin-v1",
+  "source_repository": "StegVerse-Labs/StegDB",
+  "source_commit_sha": "eb488813c4cf8b6baa76609f2aab90d7e6126fcd",
+  "vendor_root": "HEE/canonical/vendor/stegdb/eb488813c4cf8b6baa76609f2aab90d7e6126fcd",
+  "acquisition": "Bytes read once from StegVerse-Labs/StegDB at the pinned commit through the authenticated contents API; each git_blob_sha equals the blob sha the API reported for that path at that commit.",
+  "rationale": "StegVerse-org/.github docs/ORGANIZATION_ROLE_RUNTIME_REALITY_DEPLOYMENT.md L33: evidence travels as bytes rather than as a reachability promise. The check verifies these bytes at run time and makes no network request.",
+  "files": [
+    {
+      "path": "protocols/hee/hee-v1-package.json",
+      "sha256": "0553d648b00e929f34b6223d6d387c228c5c617c68e09d0f58d1e8dc442ec79b",
+      "size_bytes": 1548,
+      "git_blob_sha": "d1fabad70065f50050ec3767be82565f212a9ebf"
+    },
+    {
+      "path": "protocols/hee/artifact-record-v1.schema.json",
+      "sha256": "7e3883a1f8372e9e44fc3601317d61242d321b17664f5cd1f8aaab5b385894e6",
+      "size_bytes": 2747,
+      "git_blob_sha": "ca276121a24e36e1a73cbc3b2751a2c81f516510"
+    },
+    {
+      "path": "protocols/hee/packet-manifest-v1.schema.json",
+      "sha256": "d74b4b98f82f8d71f88818d1fc70250f49727f411d308575bda651e5545f376b",
+      "size_bytes": 1477,
+      "git_blob_sha": "a8e165a76a7c02cb9c931c1a2f65668e7e3e8345"
+    },
+    {
+      "path": "protocols/hee/evidence-confidence-v1.md",
+      "sha256": "01ee65b6deacd578bdea1d1f595ef82e8a2cf892254c78d524ebaf344d90fd3a",
+      "size_bytes": 2773,
+      "git_blob_sha": "3398367699421a06be85b9e74069002aef96bee6"
+    },
+    {
+      "path": "protocols/hee/evidence-confidence-override-receipt-v1.schema.json",
+      "sha256": "155d0954a475c0e9d5c7f15913f1ae724a6dba66983e2f0ca15e659e86946654",
+      "size_bytes": 1335,
+      "git_blob_sha": "712e1b53c2c5dbbf78ac472052efdb7dbd929703"
+    },
+    {
+      "path": "protocols/custody/custody-transition-v1.schema.json",
+      "sha256": "fc3dfda7403f60dbeb5ff1f649d495a5a984078dd7605744419ed72883c6130c",
+      "size_bytes": 1622,
+      "git_blob_sha": "6ede3d391a28c43093df01125c71b6f157af0371"
+    },
+    {
+      "path": "protocols/notifications/custody-notification-v1.schema.json",
+      "sha256": "e02a104a07f7cc4aeaa20cf0d71525eb8b4dab6891d0cb013991ba0356e9e4a6",
+      "size_bytes": 1718,
+      "git_blob_sha": "097c544b7e00554136c417df54b8e79e682ff4f0"
+    },
+    {
+      "path": "protocols/hee/household-source-lock-v1.schema.json",
+      "sha256": "a7757e17aa91fd9636e492c4c5e5498be27712a7b95b396f6117acf9aee76001",
+      "size_bytes": 1653,
+      "git_blob_sha": "02f626dba403ffb45fea4bab4339493de4932909"
+    }
+  ]
+}

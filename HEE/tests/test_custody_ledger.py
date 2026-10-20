@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -11,6 +12,9 @@ MODULE_PATH = ROOT / "HEE" / "engine" / "custody_ledger.py"
 SPEC = importlib.util.spec_from_file_location("custody_ledger", MODULE_PATH)
 assert SPEC and SPEC.loader
 MODULE = importlib.util.module_from_spec(SPEC)
+# Register before exec so @dataclass can resolve the module namespace under
+# `from __future__ import annotations` (dataclasses reads sys.modules[cls.__module__]).
+sys.modules[SPEC.name] = MODULE
 SPEC.loader.exec_module(MODULE)
 
 

@@ -15,5 +15,6 @@
     "protocols/hee/household-source-lock-v1.schema.json"
   ],
   "overlay_only": true,
-  "incident_data_modified": false
+  "incident_data_modified": false,
+  "pin_manifest_path": "HEE/canonical/stegdb-hee-v1-pin.json"
 }
